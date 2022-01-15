@@ -29,6 +29,7 @@ hs_err_pid*
 .project
 .settings/
 bin/
+.idea*
 .gradle*
 gradlew.bat
 **/build/
