@@ -1,0 +1,41 @@
+server:
+  port: 5001
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    serialization:
+      write-dates-as-timestamps: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank?createDatabaseIfNotExist=true
+    username: username
+    password: password
+
+  kafka:
+    listener:
+      ack-mode: manual_immediate
+    consumer:
+      bootstrap-servers: "localhost:9092"
+      group-id: "bank-account-consumer"
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace

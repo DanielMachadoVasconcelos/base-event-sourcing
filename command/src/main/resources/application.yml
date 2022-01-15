@@ -1,0 +1,19 @@
+server:
+  port: 5000
+  error:
+    include-binding-errors: always
+    include-message: always
+    include-exception: true
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  elasticsearch:
+    uris: "localhost:9200"
+
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
