@@ -5,6 +5,8 @@ import br.ead.home.model.AccountAggregate;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.google.common.base.Preconditions.*;
+
 @Service
 @AllArgsConstructor
 public class AccountCommandHandler implements CommandHandler {
@@ -35,9 +37,7 @@ public class AccountCommandHandler implements CommandHandler {
     public void handler(WithdrawFundsCommand command) {
         var aggregate = eventSourcingHandler.getById(command.getId());
 
-        if (command.getAmount() > aggregate.getBalance()) {
-            throw new IllegalStateException("Withdraw declined due to insufficient founds!");
-        }
+        checkState(command.getAmount() < aggregate.getBalance(), "Withdraw declined due to insufficient founds!");
 
         aggregate.withdrawFunds(command.getAmount());
         eventSourcingHandler.save(aggregate);

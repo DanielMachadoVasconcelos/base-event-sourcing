@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.*;
+
 @Service
 @AllArgsConstructor
 public class AccountCommandDispatcher implements CommandDispatcher {
@@ -24,12 +26,9 @@ public class AccountCommandDispatcher implements CommandDispatcher {
     @Override
     public void send(BaseCommand command) {
         var handlers = routes.get(command.getClass());
-        if(handlers == null || handlers.size() == 0) {
-            throw new IllegalStateException("No command handler is registered!");
-        }
-        if (handlers.size() > 1) {
-            throw new IllegalStateException("Can't send to more then one handler!");
-        }
+        checkNotNull(handlers,"No command handler is registered!");
+        checkState(!handlers.isEmpty(), "No command handler is registered!");
+        checkState(handlers.size() == 1, "Can't send to more then one handler!");
         handlers.get(0).handle(command);
     }
 }

@@ -62,7 +62,7 @@ public class AccountEventStore implements EventStore {
     public List<BaseEvent> getEvents(String aggregatedId) {
         var eventStream = repository.findByAggregatedIdentifier(aggregatedId);
         if (eventStream == null || eventStream.isEmpty()) {
-            throw new AggregateNotFoundException("Incorrect account ID provided!");
+            throw new AggregateNotFoundException(MessageFormat.format("Incorrect account ID provided! No bank account found for ID {0}", aggregatedId));
         }
         return eventStream.stream()
                 .map(EventModel::getEventData)

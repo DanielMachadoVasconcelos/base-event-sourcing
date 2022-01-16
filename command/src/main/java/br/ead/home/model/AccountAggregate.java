@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkState;
+
 
 @Data
 @NoArgsConstructor
@@ -37,13 +39,8 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void depositFunds(double amount) {
-        if (!active) {
-            throw new IllegalArgumentException("Founds cannot be deposit into a closed account!");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("The deposit amount must be greater than 0!");
-        }
-
+        checkState(active, "Founds cannot be deposit to a closed account!");
+        checkState(amount > 0, "The deposit amount must be greater than 0!");
         raiseEvent(FundsDepositedEvent.builder()
                 .id(id)
                 .amount(amount)
@@ -56,13 +53,8 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void withdrawFunds(double amount) {
-        if (!active) {
-            throw new IllegalArgumentException("Founds cannot be withdraw from a closed account!");
-        }
-        if (amount < 0) {
-            throw new IllegalArgumentException("The withdraw amount must be greater than 0!");
-        }
-
+        checkState(active, "Founds cannot be withdraw from a closed account!");
+        checkState(amount > 0, "The withdraw amount must be greater than 0!");
         raiseEvent(FundsWithdrawnEvent.builder()
                 .id(id)
                 .amount(amount)
@@ -75,10 +67,7 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void closeAccount() {
-        if (!active) {
-            throw new IllegalArgumentException("Cannot close an already closed account!");
-        }
-
+        checkState(!active, "Cannot close an already closed account!");
         raiseEvent(AccountClosedEvent.builder()
                 .id(id)
                 .build());
