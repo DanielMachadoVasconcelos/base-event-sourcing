@@ -63,7 +63,7 @@ mvn spring-boot:run
 ```
 Use the following commands to open, deposit, withdraw and close a bank account:
 
-####To open a bank account
+#### To open a bank account
 ```bash
 curl --location --request POST 'localhost:5000/api/v1/bank-accounts' \
 --header 'Content-Type: application/json' \
@@ -73,7 +73,7 @@ curl --location --request POST 'localhost:5000/api/v1/bank-accounts' \
     "opening_balance": 45.0
 }'
 ```
-####To deposit funds to bank account
+#### To deposit funds to bank account
 ```bash
 curl --location --request POST 'localhost:5000/api/v1/bank-accounts/{bank-account-id}/deposits' \
 --header 'Content-Type: application/json' \
@@ -81,7 +81,7 @@ curl --location --request POST 'localhost:5000/api/v1/bank-accounts/{bank-accoun
     "amount": 12
 }'
 ```
-####To withdraw funds from a bank account
+#### To withdraw funds from a bank account
 ```bash
 curl --location --request POST 'localhost:5000/api/v1/bank-accounts/{bank-account-id}/withdraws' \
 --header 'Content-Type: application/json' \
@@ -90,7 +90,7 @@ curl --location --request POST 'localhost:5000/api/v1/bank-accounts/{bank-accoun
 }'
 ```
 
-####To close a bank account
+#### To close a bank account
 ```bash
 curl --location --request POST 'localhost:5000/api/v1/bank-accounts/6a21d2c6-a7e9-42ee-a584-86dcc331aafc/close' \
 --header 'Content-Type: application/json' \
@@ -104,7 +104,7 @@ cd query
 mvn spring-boot:run
 ```
 
-###Postgres
+### Postgres
 * Access the local url (localhost:5050) in your favorite browser to verify the Postgres Database
 
 **Use the following credentials:**
@@ -114,7 +114,7 @@ mvn spring-boot:run
 | admin@admin.com | admin | 
 
 
-###Kibana
+### Kibana
 * Access the local url (localhost:5601) in your favorite browser to verify the Elasticsearch Database
 
 **No credentials are needed:**
