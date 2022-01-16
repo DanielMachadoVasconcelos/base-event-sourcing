@@ -1,61 +1,127 @@
-#1. Java Development Kit (JDK)
+# Bank Account Service
+## Daniel Machado Vasconcelos
 
-OpenJDK:
-https://openjdk.java.net/install/
+### Basic requirements (that were implemented):
+* Expose endpoints to create and close a bank account;
+* Expose endpoints to deposit and withdraw founds;
+* The service must make use of event source and CQRS;
+* The service must persist aggregate state of all bank accounts;
 
-Oracle JDK:
-https://www.oracle.com/java/technologies/javase-downloads.html
+### Extra requirements to be done:
+* Add security layer to permit only authenticated users to operate;
+* Add swagger documentation to the Rest API;
+* Make sure all exchanged messages are encrypted, authenticated and has schema.
 
-Once installed, check Java version:
-> java -version
+---
+Prerequisites
+-------------
 
-#2. Maven
+* Java JDK 17
+* Maven 
+* Docker / Docker Compose
 
-Download from:
-https://maven.apache.org/download.cgi
+#### Resources
+* Kafka
+* Postgres
+* Elasticsearch
 
-Once installed, check Maven version:
-> mvn -v OR mvn --version
+### Tech Stack usage
 
-#3. IDE or Code Editor
+**Kafka**
 
-IntelliJ IDEA:
-https://www.jetbrains.com/idea/download/
+I used kafka as my main message broker, to communicate between other services components, that are interested in the events.
 
-NetBeans IDE:
-https://netbeans.apache.org/download/index.html
+**Postgres**
 
-Eclipse:
-https://www.eclipse.org/downloads/
+This resource saves the aggregate state of my bank account. The service reduce the list of events to a single bank account database row.
 
-VS Code:
-https://code.visualstudio.com/download
+**Elasticsearch**
 
-#4. Postman
+This database saves the list of events in order, ensured by an optimistic lock.
 
-Download from:
-https://www.postman.com/downloads/
 
-#5. Docker
+## How to build?
 
-Download for Mac or Windows:
-https://www.docker.com/products/docker-desktop
+Clone this repo into new project folder (e.g., `bank-account-service`).
 
-Download for Linux Ubuntu:
-https://docs.docker.com/engine/install/ubuntu/
+```bash
+git clone https://github.com/DanielMachadoVasconcelos/bank-account.git
+cd bank-account-service
+```
 
-Download for Linux Debian:
-https://docs.docker.com/engine/install/debian/
+Start the external resources by running the docker-compose file. (It may take a while to start all resources)
+```bash
+docker-compose up -d 
+```
+---
+**Start individually the spring boot applications (command and query)**
 
-Download for Linux CentOS:
-https://docs.docker.com/engine/install/centos/
+Start the service (command) that expose the REST API:
+```bash
+cd command
+mvn spring-boot:run
+```
+Use the following commands to open, deposit, withdraw and close a bank account:
 
-Download for Linux Fedora:
-https://docs.docker.com/engine/install/fedora/
+####To open a bank account
+```bash
+curl --location --request POST 'localhost:5000/api/v1/bank-accounts' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "account_holder":"daniel.vasconcelos",
+    "account_type": "SAVINGS",
+    "opening_balance": 45.0
+}'
+```
+####To deposit funds to bank account
+```bash
+curl --location --request POST 'localhost:5000/api/v1/bank-accounts/{bank-account-id}/deposits' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "amount": 12
+}'
+```
+####To withdraw funds from a bank account
+```bash
+curl --location --request POST 'localhost:5000/api/v1/bank-accounts/{bank-account-id}/withdraws' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "amount": 7.45
+}'
+```
 
-Once installed, check Docker version:
-> docker --version
+####To close a bank account
+```bash
+curl --location --request POST 'localhost:5000/api/v1/bank-accounts/6a21d2c6-a7e9-42ee-a584-86dcc331aafc/close' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+}'
+```
+---
+Start the service (query) that will aggregate the bank account events:
+```bash
+cd query
+mvn spring-boot:run
+```
 
-#6. Install or init docker compose
+###Postgres
+* Access the local url (localhost:5050) in your favorite browser to verify the Postgres Database
 
-https://docs.docker.com/compose/install
+**Use the following credentials:**
+
+| username      | password |
+|---------------|--------|
+| admin@admin.com | admin | 
+
+
+###Kibana
+* Access the local url (localhost:5601) in your favorite browser to verify the Elasticsearch Database
+
+**No credentials are needed:**
+
+* Find the option 'Dev Tools' on the left menu
+* Type the following command in the console:
+
+```
+ GET event-store/_search
+```
