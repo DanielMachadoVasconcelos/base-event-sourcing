@@ -22,11 +22,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
     - name: Spin up docker compose resources
       run: docker-compose up -d
-    - name: Execute Tests with Maven
-      run: mvn -B test --file pom.xml
+
+    - name: Build with Maven
+      run: mvn -B clean install --file pom.xml
+
     - name: Clean up docker compose resources
       run: docker-compose down
