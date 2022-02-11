@@ -34,46 +34,31 @@ public class AccountEventHandler implements EventHandler {
 
     @Override
     public void on(AccountClosedEvent event) {
-        var maybeABankAccount = repository.findById(event.getId());
-
-        if (maybeABankAccount.isEmpty()) {
-            return;
-        }
-
-        var bankAccount = maybeABankAccount.get();
-        bankAccount.setClosedAt(Date.from(Instant.now()));
-        repository.save(bankAccount);
+        repository.findById(event.getId()).ifPresent(bankAccount -> {
+            bankAccount.setClosedAt(Date.from(Instant.now()));
+            repository.save(bankAccount);
+        });
     }
 
     @Override
     public void on(FundsWithdrawnEvent event) {
-        var maybeABankAccount = repository.findById(event.getId());
+        repository.findById(event.getId()).ifPresent(bankAccount -> {
+            var currentBalance = bankAccount.getBalance();
+            var latestBalance = currentBalance - event.getAmount();
 
-        if (maybeABankAccount.isEmpty()) {
-            return ;
-        }
-
-        var bankAccount = maybeABankAccount.get();
-        var currentBalance = bankAccount.getBalance();
-        var latestBalance = currentBalance - event.getAmount();
-
-        bankAccount.setBalance(latestBalance);
-        repository.save(bankAccount);
+            bankAccount.setBalance(latestBalance);
+            repository.save(bankAccount);
+        });
     }
 
     @Override
     public void on(FundsDepositedEvent event) {
-        var maybeABankAccount = repository.findById(event.getId());
+        repository.findById(event.getId()).ifPresent(bankAccount -> {
+            var currentBalance = bankAccount.getBalance();
+            var latestBalance = currentBalance + event.getAmount();
 
-        if (maybeABankAccount.isEmpty()) {
-            return ;
-        }
-
-        var bankAccount = maybeABankAccount.get();
-        var currentBalance = bankAccount.getBalance();
-        var latestBalance = currentBalance + event.getAmount();
-
-        bankAccount.setBalance(latestBalance);
-        repository.save(bankAccount);
+            bankAccount.setBalance(latestBalance);
+            repository.save(bankAccount);
+        });
     }
 }
