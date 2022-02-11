@@ -67,7 +67,7 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void closeAccount() {
-        checkState(!active, "Cannot close an already closed account!");
+        checkState(active, "Cannot close an already closed account!");
         raiseEvent(AccountClosedEvent.builder()
                 .id(id)
                 .build());
