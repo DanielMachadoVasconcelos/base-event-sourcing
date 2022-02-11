@@ -16,8 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the stack
-      run: docker-compose up -d
     - name: Set up JDK 17
       uses: actions/setup-java@v2
       with:
@@ -26,3 +24,9 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Spin up docker compose resources
+      run: docker-compose up -d
+    - name: Execute Tests with Maven
+      run: mvn -B test --file pom.xml
+    - name: Clean up docker compose resources
+      run: docker-compose down
