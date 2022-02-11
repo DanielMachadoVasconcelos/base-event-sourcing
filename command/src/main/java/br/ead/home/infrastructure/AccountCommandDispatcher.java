@@ -26,7 +26,7 @@ public class AccountCommandDispatcher implements CommandDispatcher {
     @Override
     public void send(BaseCommand command) {
         var handlers = routes.get(command.getClass());
-        checkNotNull(handlers,"No command handler is registered!");
+        checkArgument(handlers != null,"No command handler is registered!");
         checkState(!handlers.isEmpty(), "No command handler is registered!");
         checkState(handlers.size() == 1, "Can't send to more then one handler!");
         handlers.get(0).handle(command);

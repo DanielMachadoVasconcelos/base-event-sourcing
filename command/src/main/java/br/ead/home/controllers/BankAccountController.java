@@ -7,6 +7,7 @@ import br.ead.home.model.dto.BaseResponse;
 import br.ead.home.model.dto.OpenAccountResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ public class BankAccountController {
     CommandDispatcher commandDispatcher;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse openAccount(@RequestBody @Valid @NotNull OpenAccountCommand command) {
         var id = UUID.randomUUID().toString();
         command.setId(id);
@@ -33,6 +35,7 @@ public class BankAccountController {
                 .build();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping(path = "/{bank-account-id}/close")
     public BaseResponse closeAccount(@PathVariable("bank-account-id") @NotBlank String bankAccountId) {
         commandDispatcher.send(CloseAccountCommand.builder()
